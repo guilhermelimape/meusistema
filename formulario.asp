@@ -15,7 +15,7 @@ nome = Request.Form("nome")
 <body>
     <h1>Cadastro de Nome</h1>
 
-    <form method="post" action="formulario.asp">
+    <form method="post" action="salvar.asp">
         <label for="nome">Digite seu nome:</label>
         <input type="text" id="nome" name="nome" required>
         <input type="submit" value="Enviar">
