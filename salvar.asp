@@ -1,12 +1,28 @@
 <%@ Language=VBScript %>
 <!--#include file="includes/conexao.asp"-->
 <%
-Dim nome, cmd
+Dim nome, cmd, email, idade, erro
 nome = Trim(Request.Form("nome"))
 email = Trim(Request.Form("email"))
 idade = Trim(Request.Form("idade"))
 
-If nome <> "" Then
+erro = ""
+' Validações
+If nome = "" Then
+    erro = erro & "<li>O campo <strong>Nome</strong> é obrigatório.</li>"
+End If
+
+if email = "" Then
+    erro = erro & "<li>O campo <strong>Email</strong> é obrigatório.</li>"
+elseif InStr(email, "@") = 0 or InStr(email, ".") = 0 Then
+    erro = erro & "<li>O <strong>Email</strong> parece inválido.</li>"
+end if 
+
+if Not IsNumeric(idade) or CInt(idade) < 0 Then
+    erro = erro & "<li>Informe uma <strong>idade válida</strong>.<li>"
+end if 
+
+If erro = "" then
     Set cmd = Server.CreateObject("ADODB.Command")
     Set cmd.ActiveConnection = conn
     cmd.CommandText = "insert into msUsuarios (nome, email, idade) values (?, ?, ?)"
@@ -21,7 +37,15 @@ If nome <> "" Then
     
     Response.Redirect "formulario.asp"
 Else
-    Response.Write "Nome não pode ser vazio."
+%>
+    <html><head><meta charset="UTF-8"></head><body>
+    <h2>Erros encontrados:</h2>
+    <ul style="color:red;">
+        <%=erro%>
+    </ul>
+    <p><a href="javascript:history.back()">← Voltar e corrigir</a></p>
+    </body></html>
+<%
 End If
 
 conn.Close
