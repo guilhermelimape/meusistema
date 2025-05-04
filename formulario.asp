@@ -13,16 +13,25 @@ nome = Request.Form("nome")
     <title>Formulário Simples</title>
 </head>
 <body>
-    <h1>Cadastro de Nome</h1>
+    <h1>Cadastro de Usuário</h1>
 
     <form method="post" action="salvar.asp">
-        <label for="nome">Digite seu nome:</label>
-        <input type="text" id="nome" name="nome" required>
+        <label for="nome">Nome</label><br>
+        <input type="text" id="nome" name="nome"><br><br>
+
+        <label>Email:</label><br>
+        <input type="email" id="email" name="email"><br><br>
+
+        <label>Idade:</label><br>
+        <input type="number" id="idade" name="idade"><br><br>
+
         <input type="submit" value="Enviar">
     </form>
 
     <% if nome <> "" then %>
-        <p>Olá, <strong><%=nome%></strong>! Seu nome foi recebido com sucesso.</p>
+        <p>Olá, <strong><%=nome%></strong> cadastrado com sucesso.</p>
     <% end if %>
+
+    <p><a href="listar.asp">→ Ver lista de usuários</a></p>
 </body>
 </html>
