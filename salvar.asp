@@ -1,13 +1,21 @@
 <%@ Language=VBScript %>
 <!--#include file="includes/conexao.asp"-->
 <%
-Dim nome
+Dim nome, cmd
 nome = Trim(Request.Form("nome"))
 
 If nome <> "" Then
-    nome = Replace(nome, "'", "''") ' prevenção básica contra SQL Injection
-    sql = "INSERT INTO msUsuarios (nome) VALUES ('" & nome & "')"
-    conn.Execute sql
+
+    Set cmd = Server.CreateObject("ADODB.Command")
+    Set cmd.ActiveConnection = conn
+    cmd.CommandText = "insert into msUsuarios (nome) values (?)"
+    cmd.CommandType = 1 ' adCmdText
+
+    cmd.Parameters.Append cmd.CreateParameter("@nome", 200, 1, 100, nome)
+
+    cmd.Execute
+    Set cmd = Nothing
+    
     Response.Redirect "formulario.asp"
 Else
     Response.Write "Nome não pode ser vazio."
