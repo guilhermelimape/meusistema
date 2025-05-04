@@ -51,6 +51,7 @@ Set rs = conn.Execute(sql)
             <th>E-mail</th>
             <th>Idade</th>
             <th>Data de Cadastro</th>
+            <th>Ações</th>
         </tr>
 
         <% Do until rs.eof %>
@@ -60,6 +61,10 @@ Set rs = conn.Execute(sql)
                 <td><%=rs("email")%></td>
                 <td><%=rs("idade")%></td>
                 <td><%=rs("data_cadastro")%></td>
+                <td>
+                    <a href="editar.asp?id=<%=rs("id")%>">✏️ Editar</a> |
+                    <a href="excluir.asp?id=<%=rs("id")%>" onclick="return confirm('Tem certeza que deseja excluir?')">🗑 Excluir</a>
+                </td>
             </tr>
             <%
             rs.MoveNext
