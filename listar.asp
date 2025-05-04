@@ -4,6 +4,17 @@
 Dim rs, sql, filtro
 filtro = Trim(Request.QueryString("nome"))
 
+' Tenta recuperar do cookie se não veio nada na URL
+'if filtro = "" then
+'    filtro = Trim(Request.Cookies("filtro_nome"))
+'end if
+
+' Salva no cookie se veio via URL
+'if filtro <> "" then
+'    Response.Cookies("filtro_nome") = filtro
+'    Response.Cookies("filtro_nome").Expires = Date + 30 
+'end if
+
 sql = "select id, nome, email, idade, data_cadastro from msUsuarios"
 
 if filtro <> "" then
@@ -25,7 +36,8 @@ Set rs = conn.Execute(sql)
 <body>
     <form method="get" action="listar.asp">
         <label>Filtrar por nome:</label>
-        <input type="text" name="nome" value="<%=Request.QueryString("nome")%>">
+        <input type="text" name="nome" value="<%=Request.QueryString("nome")%>"> 
+        <!--<input type="text" name="nome" value="<%'=filtro%>"> -->
         <input type="submit" value="Buscar">
     </form>
     <br>
