@@ -1,19 +1,23 @@
 <%@ Language = VBScript %>
 <!--#include file="includes/conexao.asp"-->
 <%
-Dim rs, sql, filtro
+
+If Session("usuario") = "" Then
+  Response.Redirect "login.asp"
+End If
+
+Dim rs, sql, filtro, pagina, paginaAtual, registrosPorPagina
+
+pagina = Request.QueryString("pagina")
+if not IsNumeric(pagina) or pagina = "" then 
+    paginaAtual = 1
+else
+    paginaAtual = CInt(pagina)
+end if
+
+registrosPorPagina = 5 ' Você pode ajustar
+
 filtro = Trim(Request.QueryString("nome"))
-
-' Tenta recuperar do cookie se não veio nada na URL
-'if filtro = "" then
-'    filtro = Trim(Request.Cookies("filtro_nome"))
-'end if
-
-' Salva no cookie se veio via URL
-'if filtro <> "" then
-'    Response.Cookies("filtro_nome") = filtro
-'    Response.Cookies("filtro_nome").Expires = Date + 30 
-'end if
 
 sql = "select id, nome, email, idade, data_cadastro from msUsuarios"
 
@@ -21,10 +25,25 @@ if filtro <> "" then
     filtro = Replace(filtro, "'", "''") ' proteção básica
     sql = sql & " where nome like '%" & filtro & "%'"
 end if
-
 'sql = sql & " ORDER BY data_cadastro DESC"
 
-Set rs = conn.Execute(sql)
+Set rs = Server.CreateObject("ADODB.Recordset")
+rs.PageSize = registrosPorPagina
+rs.CacheSize = registrosPorPagina
+rs.Open sql, conn, 1, 3 'adOpenKeyset, adLockOptimistic
+
+if not rs.eof then
+    rs.AbsolutePage = paginaAtual
+end if
+
+Dim totalPaginas
+if rs.RecordCount > 0 then
+    totalPaginas = rs.PageCount
+else
+    totalPaginas = 1
+end if
+
+'Set rs = conn.Execute(sql)
 %>
 
 <!DOCTYPE html>
@@ -34,6 +53,8 @@ Set rs = conn.Execute(sql)
     <title>Lista de Usuários</title>
     </head>
 <body>
+    <p>Bem-vindo, <strong><%=Session("usuario")%></strong> | <a href="logout.asp">Sair</a></p>
+
     <form method="get" action="listar.asp">
         <label>Filtrar por nome:</label>
         <input type="text" name="nome" value="<%=Request.QueryString("nome")%>"> 
@@ -54,7 +75,11 @@ Set rs = conn.Execute(sql)
             <th>Ações</th>
         </tr>
 
-        <% Do until rs.eof %>
+        <%
+        Dim contador
+        contador = 1
+        Do while not rs.eof and contador <= registrosPorPagina
+        %>
             <tr>
                 <td><%=rs("id")%></td>
                 <td><%=rs("nome")%></td>
@@ -68,11 +93,38 @@ Set rs = conn.Execute(sql)
             </tr>
             <%
             rs.MoveNext
+            contador = contador + 1
         Loop
         %>
 
     </table>
-    <p><a href="formulario.asp">← Voltar para o formulário</a></p>
+    <p>
+    <%
+    if paginaAtual > 1 then 
+        response.write "<a href='listar.asp?pagina=" & (paginaAtual - 1)
+        if filtro <> "" then response.write "&nome=" & Server.URLEncode(filtro)
+        response.write "'>◀ Anterior</a> "
+    end if
+
+    for i = 1 to totalPaginas
+        if i = paginaAtual then
+            response.write " <strong>[" & i & "]</strong> "
+        else    
+            response.write " <a href='listar.asp?pagina=" & i
+        If filtro <> "" Then Response.Write "&nome=" & Server.URLEncode(filtro)
+            Response.Write "'>" & i & "</a> "
+        End If
+    Next
+    
+        If paginaAtual < totalPaginas Then
+            Response.Write " <a href='listar.asp?pagina=" & (paginaAtual + 1)
+        If filtro <> "" Then Response.Write "&nome=" & Server.URLEncode(filtro)
+             Response.Write "'>Próxima ▶</a>"
+        End If
+    %>
+    </p>
+   
+
 </body>
 </html>
 

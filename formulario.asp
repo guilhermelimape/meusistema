@@ -13,6 +13,8 @@ nome = Request.Form("nome")
     <title>Formulário Simples</title>
 </head>
 <body>
+    <p>Bem-vindo, <strong><%=Session("usuario")%></strong> | <a href="logout.asp">Sair</a></p>
+
     <h1>Cadastro de Usuário</h1>
 
     <form method="post" action="salvar.asp">
