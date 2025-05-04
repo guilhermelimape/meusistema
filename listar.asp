@@ -2,7 +2,7 @@
 <!--#include file="includes/conexao.asp"-->
 <%
 Dim re, sql
-sql = "select id, nome, data_cadastro from msUsuarios order by data_cadastro"
+sql = "select id, nome, email, idade, data_cadastro from msUsuarios order by data_cadastro"
 Set rs = conn.Execute(sql)
 %>
 
@@ -19,6 +19,8 @@ Set rs = conn.Execute(sql)
         <tr>
             <th>ID</th>
             <th>Nome</th>
+            <th>E-mail</th>
+            <th>Idade</th>
             <th>Data de Cadastro</th>
         </tr>
 
@@ -26,6 +28,8 @@ Set rs = conn.Execute(sql)
             <tr>
                 <td><%=rs("id")%></td>
                 <td><%=rs("nome")%></td>
+                <td><%=rs("email")%></td>
+                <td><%=rs("idade")%></td>
                 <td><%=rs("data_cadastro")%></td>
             </tr>
             <%
