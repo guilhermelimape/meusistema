@@ -21,7 +21,9 @@ filtro = Trim(Request.QueryString("nome"))
 
 sql = "select id, nome, email, idade, data_cadastro from msUsuarios"
 
-if filtro <> "" then
+if session("perfil") = "usuario" then
+    sql = sql & " where id = " & session("id_usuario")
+elseif filtro <> "" then
     filtro = Replace(filtro, "'", "''") ' proteção básica
     sql = sql & " where nome like '%" & filtro & "%'"
 end if
@@ -53,7 +55,7 @@ end if
     <title>Lista de Usuários</title>
     </head>
 <body>
-    <p>Bem-vindo, <strong><%=Session("usuario")%></strong> | <a href="logout.asp">Sair</a></p>
+    <p>Bem-vindo, <strong><%=Session("usuario")%></strong> [<%=session("perfil")%>] | <a href="logout.asp">Sair</a></p>
 
     <form method="get" action="listar.asp">
         <label>Filtrar por nome:</label>

@@ -16,7 +16,9 @@ sql = "select * from msLogins where usuario = '" & usuario & "' and senha = '" &
 set rs = conn.Execute(sql)
 
 if not rs.eof then  
-    session("usuario") = usuario
+    session("usuario") = rs("usuario")
+    session("perfil") = rs("perfil")
+    session("id_usuario") = rs("id") ' importante para mostrar só os dados dele
     response.redirect "listar.asp"
 else
     response.write "Usuário ou senha inválidos."
